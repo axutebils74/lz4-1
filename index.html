@@ -1,0 +1,74 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lz4 compress</title>
+<script>
+    onerror = function (e){
+        div.innerHTML = e
+    }
+    onunhandledrejection = function(e){
+        div.innerHTML = e.reason
+    }
+</script>
+<script src="lz4.js"></script>
+<h3>压缩</h3>
+<input type="file" id="ff">
+<hr>
+<h3>解压</h3><input type="file" id="ff1">
+<br>
+<div id="div"></div>
+<script>
+ff.onchange =  function(){
+    if(!ff.value) return;
+    e =  ff.files[0];
+    f = new FileReader();
+    g = 0;
+    var s = new Uint8Array(e.size);
+    f.onload = function(){
+        if(g<e.size){
+            s.set(new Uint8Array(f.result),g);
+            g+=1e9;
+            return f.readAsArrayBuffer(e.slice(g,g+1e9));
+        }
+        a = compress(s);
+        let aa = document.createElement('a');
+        ea = [];
+        for(var i = 0;i<a.length;i+=1e9){
+            ea.push(a.subarray(i,i+1e9))
+        }
+        aa.href = URL.createObjectURL(new Blob(ea));
+        aa.download = e.name +  '.lz4'
+        aa.click();
+    }
+    f.onerror = function(e){
+        div.innerHTML = f.error
+    }
+    f.readAsArrayBuffer(e.slice(g,g+1e9));
+}    
+ff1.onchange = function(){
+    if(!ff1.value) return;
+    e =  ff1.files[0];
+    f = new FileReader();
+    g1 = 0;
+    var s = new Uint8Array(e.size);
+    f.onload = function(){
+        if(g1<e.size){
+            s.set(new Uint8Array(f.result),g1);
+            g1+=1e9;
+            return f.readAsArrayBuffer(e.slice(g1,g1+1e9));
+        }
+        a = decompress(s);
+        let aa = document.createElement('a');
+        ea = [];
+        for(var i = 0;i<a.length;i+=1e9){
+            ea.push(a.subarray(i,i+1e9))
+        }
+        aa.href = URL.createObjectURL(new Blob(ea));
+        aa.download = e.name.replace(/\.lz4$/,"");
+        aa.click();
+    }
+    f.onerror = function(e){
+        div.innerHTML = f.error
+    }
+    f.readAsArrayBuffer(e.slice(g1,g1+1e9));
+}
+</script>
